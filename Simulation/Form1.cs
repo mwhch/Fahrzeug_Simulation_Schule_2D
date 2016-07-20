@@ -13,7 +13,7 @@ namespace Simulation
 {
     public partial class Form1 : Form
     {
-        Graphics graph;
+        Graphics graph_picture_box;
         List<Fahrzeug> fahrzeugeX;
         List<Fahrzeug> fahrzeugeY;
         Random rand;
@@ -21,8 +21,9 @@ namespace Simulation
         public Form1()
         {
             InitializeComponent();
-            graph = pictureBox1.CreateGraphics();
-            rand = new Random();
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            DoubleBuffered = true;
+            graph_picture_box = pictureBox1.CreateGraphics();
             fahrzeugeX = new List<Fahrzeug>();
             fahrzeugeY = new List<Fahrzeug>();
 
@@ -98,20 +99,20 @@ namespace Simulation
             bHorizontale_strasse.Equals(horizontale_strasse);
             bVertikale_strasse = new SolidBrush(Color.LightSlateGray);
             bVertikale_strasse.Equals(vertikale_strasse);
-            graph.Clear(Color.WhiteSmoke);           //Fenster wird #gesäubert #Türkiye
-            graph.DrawRectangle(new Pen(Color.LawnGreen), gras);
-            graph.FillRectangle(bGras, gras);
-            graph.DrawRectangle(new Pen(Color.LightSlateGray), horizontale_strasse); //horizontale Straße
-            graph.FillRectangle(bHorizontale_strasse, horizontale_strasse);
-            graph.DrawRectangle(new Pen(Color.LightSlateGray), vertikale_strasse); //vertikale Straße
-            graph.FillRectangle(bVertikale_strasse, vertikale_strasse);
+            graph_picture_box.Clear(Color.WhiteSmoke);           //Fenster wird #gesäubert #Türkiye
+            graph_picture_box.DrawRectangle(new Pen(Color.LawnGreen), gras);
+            graph_picture_box.FillRectangle(bGras, gras);
+            graph_picture_box.DrawRectangle(new Pen(Color.LightSlateGray), horizontale_strasse); //horizontale Straße
+            graph_picture_box.FillRectangle(bHorizontale_strasse, horizontale_strasse);
+            graph_picture_box.DrawRectangle(new Pen(Color.LightSlateGray), vertikale_strasse); //vertikale Straße
+            graph_picture_box.FillRectangle(bVertikale_strasse, vertikale_strasse);
             foreach (Fahrzeug f in fahrzeugeX)        //Fahrzeuge werden gezeichnet
             {
-                graph.DrawRectangle(new Pen(f.farbe), f.position_x, f.position_y, 20, 20);
+                graph_picture_box.DrawRectangle(new Pen(f.farbe), f.position_x, f.position_y, 20, 20);
             }
             foreach(Fahrzeug g in fahrzeugeY)
             {
-                graph.DrawRectangle(new Pen(g.farbe), g.position_x, g.position_y, 20, 20);
+                graph_picture_box.DrawRectangle(new Pen(g.farbe), g.position_x, g.position_y, 20, 20);
             }
         }
 
@@ -119,8 +120,11 @@ namespace Simulation
         {
             Random rand;
             rand = new Random();
-            //fahrzeugeY.Add(new Auto(209, 13, 3, Color.Blue, this, 'd'));
+
+            fahrzeugeY.Add(new Auto(237, 250, rand.Next(1,10), Color.Blue, this, 'u'));
+            fahrzeugeY.Add(new Auto(209, 13, rand.Next(1, 10), Color.Blue, this, 'd'));
             fahrzeugeX.Add(new Auto(400, 127, rand.Next(1,5), Color.Blue, this, 'l'));
+            fahrzeugeX.Add(new Auto(13, 155, 4, Color.Blue, this, 'r'));
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -148,19 +152,43 @@ namespace Simulation
             return temp_fahrzeug;
         }
 
-        public Fahrzeug getNextFahrzeugY(Fahrzeug aktuell)
+        public Fahrzeug getNextFahrzeugYdown(Fahrzeug aktuell)
         {
             int abstand = 10000;
             Fahrzeug temp_fahrzeug = null;
             int entfernung;
-            foreach (Fahrzeug f in fahrzeugeX)
+            foreach (Fahrzeug f in fahrzeugeY)
             {
-                entfernung = f.position_y - aktuell.position_y + 20;
-
-                if (abstand > entfernung && entfernung > 0)
+                if (aktuell != f)
                 {
-                    abstand = entfernung;
-                    temp_fahrzeug = f;
+                    entfernung = f.position_y - aktuell.position_y + 20;
+
+                    if (abstand > entfernung && entfernung > 0)
+                    {
+                        abstand = entfernung;
+                        temp_fahrzeug = f;
+                    }
+                }
+            }
+            return temp_fahrzeug;
+        }
+
+        public Fahrzeug getNextFahrzeugYup(Fahrzeug aktuell)
+        {
+            int abstand = 10000;
+            Fahrzeug temp_fahrzeug = null;
+            int entfernung;
+            foreach (Fahrzeug f in fahrzeugeY)
+            {
+                if (aktuell != f)
+                {
+                    entfernung = aktuell.position_y - f.position_y;
+
+                    if (abstand > entfernung && entfernung > 0)
+                    {
+                        abstand = entfernung;
+                        temp_fahrzeug = f;
+                    }
                 }
             }
             return temp_fahrzeug;

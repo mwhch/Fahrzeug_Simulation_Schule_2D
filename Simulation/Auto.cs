@@ -78,45 +78,92 @@ namespace Simulation
                 }
                 position_x -= geschwindigkeit * 1; //nach links bewegen
             }
-
-            //Drive if Richtung is down or rechts
-            if (richtung == 'd')
-            {
-                if (entfernung < 30)
-                {
-                    geschwindigkeit = form.getNextFahrzeugY(this).geschwindigkeit;
-                }
-                position_y += geschwindigkeit * 1; //nach unten bewegen (down)
-            }
-
             if (richtung == 'r')
             {
+                int distanceUp = 10000;
+                int distanceDown = 10000;
+                Fahrzeug closestFahrzeugUp;
+                closestFahrzeugUp = form.getFahrzeugYHigh(this);
+                Fahrzeug closestFahrzeugDown;
+                closestFahrzeugDown = form.getFahrzeugYLow(this);
+                int closestFahrzeugUppositionX = 10000;
+                int closestFahrzeugDownpositionX = 10000;
+                if (closestFahrzeugUp != null)
+                {
+                    distanceUp = this.position_y - closestFahrzeugUp.position_y + 20;
+                    closestFahrzeugUppositionX = closestFahrzeugUp.position_x;
+                }
+                else
+                {
+                    closestFahrzeugUppositionX = 10000;
+                    distanceUp = 10000;
+                }
+                if (closestFahrzeugDown != null)
+                {
+                    distanceDown = this.position_y - closestFahrzeugDown.position_y - 20;
+                    closestFahrzeugDownpositionX = closestFahrzeugDown.position_x;
+                }
+                else
+                {
+                    closestFahrzeugDownpositionX = 10000;
+                    distanceDown = 10000;
+                }
 
-                f = form.getNextFahrzeugX(this);
-                if (f != null)
+
+                if (((distanceUp < 70 && distanceUp > 0 && distanceUp != 10000) && (closestFahrzeugUppositionX > (this.position_x))) || ((distanceDown > -100 && distanceDown < 0 && distanceDown != 10000) && (closestFahrzeugDownpositionX > (this.position_x - 20))))
                 {
-                    entfernung = f.position_x - this.position_x + 20;
+                    //temp_geschwindigkeit = geschwindigkeit;
+                    geschwindigkeit = 0;
                 }
-                if (entfernung < 30)
+                else
                 {
-                    geschwindigkeit = form.getNextFahrzeugX(this).geschwindigkeit;
+                    f = form.getNextFahrzeugX(this);
+                    if (f != null)
+                    {
+                        entfernung = f.position_x - this.position_x;
+                    }
+                    if (entfernung < 30)
+                    {
+                        geschwindigkeit = form.getNextFahrzeugX(this).geschwindigkeit;
+                    }
+                    else
+                    {
+                        geschwindigkeit = temp_geschwindigkeit;
+                    }
                 }
+
                 position_x += geschwindigkeit * 1; //nach unten bewegen (down)
 
             }
             //Drive if Richtung is up
             if (richtung == 'u')
             {
-                f = form.getNextFahrzeugY(this);
+                f = form.getNextFahrzeugYup(this);
                 if (f != null)
                 {
-                    entfernung = f.position_x - this.position_x + 20;
+                    entfernung = this.position_y - (f.position_y);
                 }
                 if (entfernung < 30)
                 {
-                    geschwindigkeit = form.getNextFahrzeugY(this).geschwindigkeit;
+                    geschwindigkeit = form.getNextFahrzeugYup(this).geschwindigkeit;
                 }
                 position_y -= geschwindigkeit * 1; //nach oben bewegen (up)
+            }
+
+            //Drive if Richtung is down
+            if (richtung == 'd')
+            {
+                f = form.getNextFahrzeugYdown(this);
+                if (f != null)
+                {
+                    entfernung = f.position_y - this.position_y - 20;
+                }
+                if (entfernung < 30)
+                {
+                    geschwindigkeit = form.getNextFahrzeugYdown(this).geschwindigkeit;
+                }
+                position_y += geschwindigkeit * 1; //nach unten bewegen (down)
+
             }
         }
 

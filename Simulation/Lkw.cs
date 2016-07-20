@@ -49,12 +49,12 @@ namespace Simulation
             }
             else
             {
-                f = form.getNextFahrzeugY(this);
+                f = form.getNextFahrzeugYdown(this);
                 if(f != null)
                     entfernung = f.position_y - this.position_y + 20;
 
                 if (entfernung < 30)
-                    geschwindigkeit = form.getNextFahrzeugY(this).geschwindigkeit;
+                    geschwindigkeit = form.getNextFahrzeugYdown(this).geschwindigkeit;
                 if (richtung == 'u')
                     position_y -= geschwindigkeit * 1; //nach oben bewegen (up)
                 else if (richtung == 'd')
